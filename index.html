@@ -1,1 +1,487 @@
-hola
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🏦 Ticket Pago Móvil</title>
+    <meta name="description" content="Ticket de pago móvil seguro y temporal">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #0f0c29 0%, #302b63 55%, #24243e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px 32px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 430px;
+            animation: fadeInUp 0.45s ease-out both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── HEADER ── */
+        .header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .header-icon {
+            font-size: 52px;
+            display: block;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ── TIMER ── */
+        .timer-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 18px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            backdrop-filter: blur(10px);
+        }
+        .timer-emoji { font-size: 28px; flex-shrink: 0; }
+        .timer-body  { flex: 1; min-width: 0; }
+        .timer-label {
+            color: rgba(255,255,255,0.45);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 2px;
+        }
+        .timer-value {
+            color: #fff;
+            font-size: 26px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        .timer-value.warn   { color: #f59e0b; }
+        .timer-value.urgent { color: #ef4444; animation: blink 0.9s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+
+        .progress-track {
+            height: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #667eea, #a78bfa);
+            transition: width 1s linear;
+        }
+        .progress-fill.warn { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+        }
+
+        .card-top {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .card-top-emoji { font-size: 30px; }
+        .card-top-info h2 {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+        .card-top-info p {
+            color: rgba(255,255,255,0.72);
+            font-size: 12.5px;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .card-body { padding: 0 20px 20px; }
+
+        /* ── FIELD ── */
+        .field {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .field:last-of-type { border-bottom: none; }
+
+        .field-icon { font-size: 22px; width: 30px; text-align: center; flex-shrink: 0; }
+
+        .field-text { flex: 1; min-width: 0; }
+        .field-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 3px;
+        }
+        .field-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            word-break: break-all;
+        }
+        .field-value.big {
+            font-size: 22px;
+            color: #4f46e5;
+        }
+
+        /* ── COPY BUTTON ── */
+        .btn-copy {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            padding: 9px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-copy:hover  { transform: scale(1.04); box-shadow: 0 6px 16px rgba(102,126,234,0.45); }
+        .btn-copy:active { transform: scale(0.96); }
+        .btn-copy.done   { background: linear-gradient(135deg, #10b981, #059669); }
+
+        /* ── BCV ROW ── */
+        .bcv-row {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bcv-row .icon { font-size: 18px; }
+        .bcv-txt { font-size: 13px; color: #64748b; line-height: 1.4; }
+        .bcv-txt b { color: #334155; }
+
+        /* ── EXPIRED ── */
+        #expiredScreen {
+            display: none;
+            text-align: center;
+            padding: 40px 24px 32px;
+        }
+        #expiredScreen .exp-icon  { font-size: 64px; display:block; margin-bottom:12px; }
+        #expiredScreen h2         { font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom:8px; }
+        #expiredScreen p          { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+        /* ── ERROR ── */
+        #errorScreen { display:none; text-align:center; padding: 48px 24px; }
+        #errorScreen h2 { font-size:20px; font-weight:800; color:#1e293b; margin-bottom:8px; }
+        #errorScreen p  { font-size:14px; color:#64748b; line-height:1.6; }
+
+        /* ── FOOTER ── */
+        .footer { text-align:center; margin-top:18px; }
+        .footer-badge {
+            display:inline-flex; align-items:center; gap:6px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius:20px; padding:7px 16px;
+            color: rgba(255,255,255,0.4);
+            font-size: 11px; font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <span class="header-icon">🏦</span>
+        <h1>Ticket Pago Móvil</h1>
+        <p>Toca 📋 para copiar cada dato al instante</p>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-card" id="timerCard">
+        <span class="timer-emoji">⏱️</span>
+        <div class="timer-body">
+            <div class="timer-label">Este ticket expira en</div>
+            <div class="timer-value" id="timerVal">30:00</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="card">
+
+        <!-- Top bar -->
+        <div class="card-top" id="cardTop">
+            <span class="card-top-emoji">💳</span>
+            <div class="card-top-info">
+                <h2>DATOS PAGO MÓVIL</h2>
+                <p id="bancoVal">Banco —</p>
+            </div>
+        </div>
+
+        <!-- Body: ticket data -->
+        <div class="card-body" id="ticketBody">
+
+            <!-- Monto -->
+            <div class="field">
+                <span class="field-icon">💰</span>
+                <div class="field-text">
+                    <div class="field-label">Monto a pagar</div>
+                    <div class="field-value big" id="montoVal">—</div>
+                </div>
+                <button class="btn-copy" id="btnMonto" onclick="copiar('monto')">📋 Copiar</button>
+            </div>
+
+            <!-- Cédula -->
+            <div class="field">
+                <span class="field-icon">🆔</span>
+                <div class="field-text">
+                    <div class="field-label">Cédula de Identidad</div>
+                    <div class="field-value" id="cedulaVal">—</div>
+                </div>
+                <button class="btn-copy" id="btnCedula" onclick="copiar('cedula')">📋 Copiar</button>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="field">
+                <span class="field-icon">📱</span>
+                <div class="field-text">
+                    <div class="field-label">Número de Teléfono</div>
+                    <div class="field-value" id="telefonoVal">—</div>
+                </div>
+                <button class="btn-copy" id="btnTelefono" onclick="copiar('telefono')">📋 Copiar</button>
+            </div>
+
+            <!-- BCV Info -->
+            <div class="bcv-row">
+                <span class="icon">📊</span>
+                <div class="bcv-txt">
+                    Equivale a <b id="usdVal">$—</b> USD &nbsp;·&nbsp; Tasa BCV <b id="tasaVal">—</b>
+                </div>
+            </div>
+
+        </div><!-- /card-body -->
+
+        <!-- EXPIRED SCREEN (inside card) -->
+        <div id="expiredScreen">
+            <span class="exp-icon">⏰</span>
+            <h2>Ticket Expirado</h2>
+            <p>Este ticket ya no está disponible.<br>Solicita uno nuevo al comerciante.</p>
+        </div>
+
+        <!-- ERROR SCREEN -->
+        <div id="errorScreen">
+            <span style="font-size:52px;display:block;margin-bottom:14px">❌</span>
+            <h2>Link no válido</h2>
+            <p>Este enlace no contiene datos de pago.<br>Solicita uno nuevo al comerciante.</p>
+        </div>
+
+    </div><!-- /card -->
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <span class="footer-badge">🔒 Ticket seguro y temporal · Pago Móvil Bot</span>
+    </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────
+const DURACION_MS = 30 * 60 * 1000; // 30 minutos en ms
+
+let datos  = null;
+let timer  = null;
+
+// ─────────────────────────────────────────────────────
+// INICIO
+// ─────────────────────────────────────────────────────
+function init() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const t = params.get('t');
+        if (!t) throw new Error('no_data');
+
+        // Decodificar base64 → JSON
+        datos = JSON.parse(atob(decodeURIComponent(t)));
+
+        // Chequear expiración ANTES de mostrar
+        if (Date.now() >= datos.exp * 1000) {
+            mostrarExpirado();
+            return;
+        }
+
+        // Poblar campos
+        document.getElementById('montoVal').textContent    = datos.monto + ' Bs';
+        document.getElementById('cedulaVal').textContent   = datos.cedula;
+        document.getElementById('telefonoVal').textContent = datos.telefono;
+        document.getElementById('bancoVal').textContent    = datos.banco + ' (' + datos.banco_codigo + ')';
+        document.getElementById('usdVal').textContent      = '$' + datos.usd;
+        document.getElementById('tasaVal').textContent     = datos.tasa;
+
+        iniciarTimer();
+
+    } catch (e) {
+        mostrarError();
+    }
+}
+
+// ─────────────────────────────────────────────────────
+// TIMER COUNTDOWN
+// ─────────────────────────────────────────────────────
+function iniciarTimer() {
+    const expMs = datos.exp * 1000;
+
+    function tick() {
+        const restante = expMs - Date.now();
+
+        if (restante <= 0) {
+            mostrarExpirado();
+            return;
+        }
+
+        const mins = Math.floor(restante / 60000);
+        const segs = Math.floor((restante % 60000) / 1000);
+        const pct  = Math.min(100, (restante / DURACION_MS) * 100);
+
+        const valEl  = document.getElementById('timerVal');
+        const fillEl = document.getElementById('progressFill');
+
+        valEl.textContent = pad(mins) + ':' + pad(segs);
+
+        // Colores
+        if (pct <= 10) {
+            valEl.className  = 'timer-value urgent';
+            fillEl.className = 'progress-fill warn';
+        } else if (pct <= 25) {
+            valEl.className  = 'timer-value warn';
+            fillEl.className = 'progress-fill warn';
+        } else {
+            valEl.className  = 'timer-value';
+            fillEl.className = 'progress-fill';
+        }
+
+        fillEl.style.width = pct + '%';
+    }
+
+    tick();
+    timer = setInterval(tick, 1000);
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+// ─────────────────────────────────────────────────────
+// COPIAR AL PORTAPAPELES
+// ─────────────────────────────────────────────────────
+function copiar(campo) {
+    const map = {
+        monto:    { valor: String(datos.monto), btnId: 'btnMonto'   },
+        cedula:   { valor: datos.cedula,         btnId: 'btnCedula'  },
+        telefono: { valor: datos.telefono,        btnId: 'btnTelefono'}
+    };
+    const { valor, btnId } = map[campo];
+    const btn = document.getElementById(btnId);
+
+    const feedback = () => {
+        btn.textContent = '✅ Copiado';
+        btn.classList.add('done');
+        setTimeout(() => {
+            btn.textContent = '📋 Copiar';
+            btn.classList.remove('done');
+        }, 2200);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(valor).then(feedback).catch(() => fallbackCopy(valor, feedback));
+    } else {
+        fallbackCopy(valor, feedback);
+    }
+}
+
+function fallbackCopy(texto, cb) {
+    const el = document.createElement('textarea');
+    el.value = texto;
+    el.setAttribute('readonly', '');
+    el.style.cssText = 'position:absolute;left:-9999px;top:-9999px';
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    try { document.execCommand('copy'); cb(); } catch(e) {}
+    document.body.removeChild(el);
+}
+
+// ─────────────────────────────────────────────────────
+// PANTALLAS DE EXPIRADO / ERROR
+// ─────────────────────────────────────────────────────
+function mostrarExpirado() {
+    clearInterval(timer);
+
+    document.getElementById('timerCard').style.display  = 'none';
+    document.getElementById('ticketBody').style.display = 'none';
+    document.getElementById('expiredScreen').style.display = 'block';
+
+    const top = document.getElementById('cardTop');
+    top.style.background = 'linear-gradient(135deg, #94a3b8, #64748b)';
+    top.querySelector('h2').textContent = 'TICKET EXPIRADO';
+    top.querySelector('p').textContent  = 'Este ticket ya no está disponible';
+}
+
+function mostrarError() {
+    document.getElementById('timerCard').style.display  = 'none';
+    document.getElementById('cardTop').style.display    = 'none';
+    document.getElementById('ticketBody').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'block';
+}
+
+// ─────────────────────────────────────────────────────
+// ARRANCAR
+// ─────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
+
