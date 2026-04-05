@@ -358,20 +358,32 @@ function init() {
         datos = JSON.parse(atob(decodeURIComponent(t)));
 
         // Chequear expiración ANTES de mostrar
-        if (Date.now() >= datos.exp * 1000) {
+        const expTime = datos.e || datos.exp; // Soporte para llaves nuevas y viejas
+        if (Date.now() >= expTime * 1000) {
             mostrarExpirado();
             return;
         }
 
-        // Poblar campos (Aplicando formato al monto, tasa y usd)
-        document.getElementById('montoVal').textContent    = formatVoz(datos.monto) + ' Bs';
-        document.getElementById('cedulaVal').textContent   = datos.cedula;
-        document.getElementById('telefonoVal').textContent = datos.telefono;
-        document.getElementById('bancoVal').textContent    = datos.banco + ' (' + datos.banco_codigo + ')';
-        document.getElementById('usdVal').textContent      = '$' + formatVoz(datos.usd);
-        document.getElementById('tasaVal').textContent     = formatVoz(datos.tasa);
+        // Poblar campos (Soporte para llaves minificadas)
+        const d = {
+            m: datos.m || datos.monto,
+            i: datos.i || datos.cedula,
+            p: datos.p || datos.telefono,
+            b: datos.b || datos.banco,
+            c: datos.c || datos.banco_codigo,
+            u: datos.u || datos.usd,
+            r: datos.r || datos.tasa,
+            e: datos.e || datos.exp
+        };
 
-        iniciarTimer();
+        document.getElementById('montoVal').textContent    = formatVoz(d.m) + ' Bs';
+        document.getElementById('cedulaVal').textContent   = d.i;
+        document.getElementById('telefonoVal').textContent = d.p;
+        document.getElementById('bancoVal').textContent    = d.b + ' (' + d.c + ')';
+        document.getElementById('usdVal').textContent      = '$' + formatVoz(d.u);
+        document.getElementById('tasaVal').textContent     = formatVoz(d.r);
+
+        iniciarTimer(d.e);
 
     } catch (e) {
         mostrarError();
@@ -381,8 +393,8 @@ function init() {
 // ─────────────────────────────────────────────────────
 // TIMER COUNTDOWN
 // ─────────────────────────────────────────────────────
-function iniciarTimer() {
-    const expMs = datos.exp * 1000;
+function iniciarTimer(expirationSecs) {
+    const expMs = expirationSecs * 1000;
 
     function tick() {
         const restante = expMs - Date.now();
@@ -429,14 +441,20 @@ function copiar(campo) {
     let valorFinal = "";
     let btnId = "";
 
+    const d = {
+        m: datos.m || datos.monto,
+        i: datos.i || datos.cedula,
+        p: datos.p || datos.telefono
+    };
+
     if (campo === 'monto') {
-        valorFinal = formatVoz(datos.monto);
+        valorFinal = formatVoz(d.m);
         btnId = 'btnMonto';
     } else if (campo === 'cedula') {
-        valorFinal = String(datos.cedula);
+        valorFinal = String(d.i);
         btnId = 'btnCedula';
     } else if (campo === 'telefono') {
-        valorFinal = String(datos.telefono);
+        valorFinal = String(d.p);
         btnId = 'btnTelefono';
     }
 
