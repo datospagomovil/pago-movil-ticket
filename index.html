@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏦 Ticket Pago Móvil</title>
+    <title>🏦 Datos Pago Móvil</title>
     <meta name="description" content="Ticket de pago móvil seguro y temporal">
     <meta name="robots" content="noindex, nofollow">
     <meta http-equiv="Cache-Control" content="no-store, no-cache">
@@ -338,6 +338,14 @@ let datos  = null;
 let timer  = null;
 
 // ─────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────
+function formatVoz(val) {
+    if (isNaN(val) || val === null) return val;
+    return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+}
+
+// ─────────────────────────────────────────────────────
 // INICIO
 // ─────────────────────────────────────────────────────
 function init() {
@@ -355,13 +363,13 @@ function init() {
             return;
         }
 
-        // Poblar campos
-        document.getElementById('montoVal').textContent    = datos.monto + ' Bs';
+        // Poblar campos (Aplicando formato al monto, tasa y usd)
+        document.getElementById('montoVal').textContent    = formatVoz(datos.monto) + ' Bs';
         document.getElementById('cedulaVal').textContent   = datos.cedula;
         document.getElementById('telefonoVal').textContent = datos.telefono;
         document.getElementById('bancoVal').textContent    = datos.banco + ' (' + datos.banco_codigo + ')';
-        document.getElementById('usdVal').textContent      = '$' + datos.usd;
-        document.getElementById('tasaVal').textContent     = datos.tasa;
+        document.getElementById('usdVal').textContent      = '$' + formatVoz(datos.usd);
+        document.getElementById('tasaVal').textContent     = formatVoz(datos.tasa);
 
         iniciarTimer();
 
@@ -418,12 +426,20 @@ function pad(n) { return String(n).padStart(2, '0'); }
 // COPIAR AL PORTAPAPELES
 // ─────────────────────────────────────────────────────
 function copiar(campo) {
-    const map = {
-        monto:    { valor: String(datos.monto), btnId: 'btnMonto'   },
-        cedula:   { valor: datos.cedula,         btnId: 'btnCedula'  },
-        telefono: { valor: datos.telefono,        btnId: 'btnTelefono'}
-    };
-    const { valor, btnId } = map[campo];
+    let valorFinal = "";
+    let btnId = "";
+
+    if (campo === 'monto') {
+        valorFinal = formatVoz(datos.monto);
+        btnId = 'btnMonto';
+    } else if (campo === 'cedula') {
+        valorFinal = String(datos.cedula);
+        btnId = 'btnCedula';
+    } else if (campo === 'telefono') {
+        valorFinal = String(datos.telefono);
+        btnId = 'btnTelefono';
+    }
+
     const btn = document.getElementById(btnId);
 
     const feedback = () => {
@@ -484,4 +500,3 @@ init();
 </script>
 </body>
 </html>
-
