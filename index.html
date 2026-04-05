@@ -470,9 +470,9 @@ function copiar(campo) {
     };
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(valor).then(feedback).catch(() => fallbackCopy(valor, feedback));
+        navigator.clipboard.writeText(valorFinal).then(feedback).catch(() => fallbackCopy(valorFinal, feedback));
     } else {
-        fallbackCopy(valor, feedback);
+        fallbackCopy(valorFinal, feedback);
     }
 }
 
